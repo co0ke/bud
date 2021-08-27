@@ -10,18 +10,13 @@
     {
         public async Task<Country> GetCountry(string isoCode)
         {
-            var response = await $"http://api.worldbank.org/v2/country/{isoCode}".GetAsync();
-            var responseStream = await response.ResponseMessage.Content.ReadAsStreamAsync();
+            var apiResponse = await $"http://api.worldbank.org/v2/country/{isoCode}".GetAsync();
+            var apiResponseStream = await apiResponse.ResponseMessage.Content.ReadAsStreamAsync();
 
             var xmlSerializer = new XmlSerializer(typeof(countries));
-            var xmlResult = (countries)xmlSerializer.Deserialize(responseStream);
+            var xmlResult = (countries)xmlSerializer.Deserialize(apiResponseStream);
 
-            // TODO: if deserialization into above type fails, try deserializing error XML e.g.
-            // <wb:error xmlns:wb="http://www.worldbank.org">
-            //     <wb:message id="120" key="Invalid value">The provided parameter value is not valid</wb:message>
-            // </wb:error>
-
-            if (xmlResult?.country?.Any() == null)
+            if (xmlResult?.country == null || !xmlResult.country.Any())
             {
                 return null;
             }
