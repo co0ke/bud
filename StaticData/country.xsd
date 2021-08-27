@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="NewDataSet" targetNamespace="http://www.worldbank.org" xmlns:mstns="http://www.worldbank.org" xmlns="http://www.worldbank.org" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:element name="countries" msdata:Prefix="wb">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="country" msdata:Prefix="wb" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="iso2Code" msdata:Prefix="wb" type="xs:string" minOccurs="0" msdata:Ordinal="0" />
+              <xs:element name="name" msdata:Prefix="wb" type="xs:string" minOccurs="0" msdata:Ordinal="1" />
+              <xs:element name="capitalCity" msdata:Prefix="wb" type="xs:string" minOccurs="0" msdata:Ordinal="3" />
+              <xs:element name="longitude" msdata:Prefix="wb" type="xs:string" minOccurs="0" msdata:Ordinal="4" />
+              <xs:element name="latitude" msdata:Prefix="wb" type="xs:string" minOccurs="0" msdata:Ordinal="5" />
+              <xs:element name="region" msdata:Prefix="wb" nillable="true" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:simpleContent msdata:Prefix="wb" msdata:ColumnName="region_Text" msdata:Ordinal="2">
+                    <xs:extension base="xs:string">
+                      <xs:attribute name="id" form="unqualified" type="xs:string" />
+                      <xs:attribute name="iso2code" form="unqualified" type="xs:string" />
+                    </xs:extension>
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="adminregion" msdata:Prefix="wb" nillable="true" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:simpleContent msdata:Prefix="wb" msdata:ColumnName="adminregion_Text" msdata:Ordinal="2">
+                    <xs:extension base="xs:string">
+                      <xs:attribute name="id" form="unqualified" type="xs:string" />
+                      <xs:attribute name="iso2code" form="unqualified" type="xs:string" />
+                    </xs:extension>
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="incomeLevel" msdata:Prefix="wb" nillable="true" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:simpleContent msdata:Prefix="wb" msdata:ColumnName="incomeLevel_Text" msdata:Ordinal="2">
+                    <xs:extension base="xs:string">
+                      <xs:attribute name="id" form="unqualified" type="xs:string" />
+                      <xs:attribute name="iso2code" form="unqualified" type="xs:string" />
+                    </xs:extension>
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="lendingType" msdata:Prefix="wb" nillable="true" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:simpleContent msdata:Prefix="wb" msdata:ColumnName="lendingType_Text" msdata:Ordinal="2">
+                    <xs:extension base="xs:string">
+                      <xs:attribute name="id" form="unqualified" type="xs:string" />
+                      <xs:attribute name="iso2code" form="unqualified" type="xs:string" />
+                    </xs:extension>
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="id" form="unqualified" type="xs:string" />
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="page" form="unqualified" type="xs:string" />
+      <xs:attribute name="pages" form="unqualified" type="xs:string" />
+      <xs:attribute name="per_page" form="unqualified" type="xs:string" />
+      <xs:attribute name="total" form="unqualified" type="xs:string" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="NewDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msdata:Prefix="wb">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="countries" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
