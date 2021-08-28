@@ -12,6 +12,7 @@
     <ProjectReference Include="..\Bud.DTO\Bud.DTO.csproj" />
     <ProjectReference Include="..\Bud.Repository\Bud.Repository.csproj" />
     <ProjectReference Include="..\Bud.Service\Bud.Service.csproj" />
+    <ProjectReference Include="..\Bud.Util\Bud.Util.csproj" />
   </ItemGroup>
 
 </Project>

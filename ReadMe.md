@@ -1,13 +1,13 @@
-# TODOs
+# Intro
+Hello. I've gone for an API on the front with N-Tier architecture that I believe meets the requirements. There is room for improvement and it's a bit messier than I would have liked but I had to draw a line under it somewhere. Was having trouble deserializing the JSON so went with XML and used a xsd.exe to generate the classes.
 
+# Potential TODOs
+- Consider moving mapping out of repo into service and using automapper
+- Better error handling
 - DI assembly scanning
 - Consider use of fluent validator is not meant for simple types
 - Get error mapping logic out of controller action method
 - Consider validator is called twice (API and service layer)
 - Tidy up XML class for used for deserialization
-- Better error handling
-- Automapper to go from XML class to DTO in repo
 - Unit test controllers
-- Complete unit tests for repo after rework
 - Inject FlurlClient in repo
-- Mock and inject XML serializer in repo

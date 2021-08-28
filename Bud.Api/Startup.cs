@@ -8,6 +8,7 @@ namespace Bud.Api
     using Microsoft.OpenApi.Models;
     using Bud.Repository.Country;
     using Bud.Service.Country;
+    using Bud.Util.Serialization;
     using FluentValidation;
 
     public class Startup
@@ -25,6 +26,7 @@ namespace Bud.Api
             services.AddScoped<IValidator<string>, CountryCodeValidator>();
             services.AddScoped<ICountryService, CountryService>();
             services.AddScoped<ICountryRepository, CountryRepository>();
+            services.AddScoped(typeof(IXmlSerializerWrapper<>), typeof(XmlSerializerWrapper<>));
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

@@ -1,64 +1,142 @@
 namespace Bud.Repository.UnitTests.Country
 {
-    using System;
+    using System.IO;
     using System.Threading.Tasks;
     using Bud.DTO;
     using Bud.Repository.Country;
+    using Bud.Util.Serialization;
     using FluentAssertions;
     using Flurl.Http.Testing;
+    using Moq;
     using Xunit;
 
     public class CountryRepositoryTests
     {
-        private const string SuccessResponse =
-            "<wb:countries xmlns:wb=\"http://www.worldbank.org\" page=\"1\" pages=\"1\" per_page=\"50\" total=\"1\"><wb:country id=\"BRA\"><wb:iso2Code>BR</wb:iso2Code><wb:name>Brazil</wb:name><wb:region id=\"LCN\" iso2code=\"ZJ\">Latin America & Caribbean </wb:region><wb:adminregion id=\"LAC\" iso2code=\"XJ\">Latin America & Caribbean (excluding high income)</wb:adminregion><wb:incomeLevel id=\"UMC\" iso2code=\"XT\">Upper middle income</wb:incomeLevel><wb:lendingType id=\"IBD\" iso2code=\"XF\">IBRD</wb:lendingType><wb:capitalCity>Brasilia</wb:capitalCity><wb:longitude>-47.9292</wb:longitude><wb:latitude>-15.7801</wb:latitude></wb:country></wb:countries>";
+        private readonly Mock<IXmlSerializerWrapper<countries>> _xmlSerializer;
 
-        private const string NotFoundResponse = @"<wb:error xmlns:wb=""http://www.worldbank.org""><wb:message id=""120"" key=""Invalid value"">The provided parameter value is not valid</wb:message></wb:error>";
+        public CountryRepositoryTests()
+        {
+            _xmlSerializer = new Mock<IXmlSerializerWrapper<countries>>(MockBehavior.Strict);
+        }
 
-        [Fact(Skip = "Incomplete and failing")]
+        [Fact]
         public async Task GetCountry_CountryFound_ReturnsExpectedResult()
         {
             // Arrange
-            var repository = new CountryRepository();
+            var repository = new CountryRepository(_xmlSerializer.Object);
+
+            var countriesXml = new countries
+            {
+                country = new []
+                {
+                    new countriesCountry
+                    {
+                        name = "Name",
+                        region = new []{ new countriesCountryRegion { Value = "Region" } },
+                        capitalCity = "Capital City",
+                        latitude = "1.13",
+                        longitude = "-2.04"
+                    }
+                }
+            };
+
+            _xmlSerializer
+                .Setup(x => x.Deserialize(It.IsAny<Stream>()))
+                .Returns(countriesXml);
 
             // Act
             Country country;
 
             using (var httpTest = new HttpTest())
             {
-                httpTest.RespondWith(SuccessResponse);
+                httpTest.RespondWith("<data></data>");
                 country = await repository.GetCountry("BRA");
             };
 
             // Assert
             country.Should().BeEquivalentTo(new Country
             {
-                Name = "Brazil",
-                Region = "Latin America & Caribbean",
-                CapitalCity = "Brasilia",
-                Latitude = -15.7801M,
-                Longitude = -47.9292M
+                Name = "Name",
+                Region = "Region",
+                CapitalCity = "Capital City",
+                Latitude = 1.13M,
+                Longitude = -2.04M
             });
         }
 
-        [Fact(Skip = "Incomplete and failing")]
-        public void GetCountry_NoCountryFound_ThrowsInvalidOperationException()
+        [Fact]
+        public async Task GetCountry_CountryFoundWithBadData_ReturnsFallbackValues()
         {
             // Arrange
-            var repository = new CountryRepository();
+            var repository = new CountryRepository(_xmlSerializer.Object);
+
+            var countriesXml = new countries
+            {
+                country = new []
+                {
+                    new countriesCountry
+                    {
+                        name = "Name",
+                        capitalCity = "CapitalCity",
+                        region = System.Array.Empty<countriesCountryRegion>(),
+                        latitude = "1....13",
+                        longitude = "invalid"
+                    }
+                }
+            };
+
+            _xmlSerializer
+                .Setup(x => x.Deserialize(It.IsAny<Stream>()))
+                .Returns(countriesXml);
 
             // Act
-            Action call = () =>
+            Country country;
+
+            using (var httpTest = new HttpTest())
             {
-                using (var httpTest = new HttpTest())
-                {
-                    httpTest.RespondWith(NotFoundResponse);
-                    repository.GetCountry("XX");
-                };
+                httpTest.RespondWith("<data></data>");
+                country = await repository.GetCountry("BRA");
             };
 
             // Assert
-            call.Should().Throw<InvalidOperationException>();
+            country.Should().BeEquivalentTo(new Country
+            {
+                Name = "Name",
+                CapitalCity = "CapitalCity",
+                Region = "",
+                Latitude = 0,
+                Longitude = 0
+            });
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task GetCountry_NoCountryInModel_ReturnsNull(bool useNull)
+        {
+            // Arrange
+            var repository = new CountryRepository(_xmlSerializer.Object);
+
+            var countriesXml = new countries
+            {
+                country = useNull ? null : System.Array.Empty<countriesCountry>()
+            };
+
+            _xmlSerializer
+                .Setup(x => x.Deserialize(It.IsAny<Stream>()))
+                .Returns(countriesXml);
+
+            Country country;
+
+            // Act
+            using (var httpTest = new HttpTest())
+            {
+                httpTest.RespondWith("<data></data>");
+                country = await repository.GetCountry("XX");
+            };
+
+            // Assert
+            country.Should().BeNull();
         }
     }
 }

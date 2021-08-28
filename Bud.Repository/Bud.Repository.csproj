@@ -6,6 +6,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Bud.DTO\Bud.DTO.csproj" />
+      <ProjectReference Include="..\Bud.Util\Bud.Util.csproj" />
     </ItemGroup>
 
     <ItemGroup>
